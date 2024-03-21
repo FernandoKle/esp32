@@ -1,3 +1,4 @@
+# Leer: https://github.com/peterhinch/micropython-async/blob/master/v3/docs/TUTORIAL.md
 from machine import Pin, Timer, unique_id
 import dht
 import time
@@ -5,7 +6,7 @@ import json
 import ubinascii
 from collections import OrderedDict
 import urequests
-from settings import TOKEN, CHATID, SERVIDOR_MQTT
+from my_config import TOKEN, CHATID, SERVIDOR_MQTT
 from umqtt.robust import MQTTClient
 
 CLIENT_ID = ubinascii.hexlify(unique_id()).decode('utf-8')

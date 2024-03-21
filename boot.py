@@ -1,4 +1,4 @@
-from settings import SSID, PASS_WLAN
+from my_config import SSID, PASS
 
 def do_connect():
     import network
