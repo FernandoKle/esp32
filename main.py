@@ -45,23 +45,16 @@ async def main(client):
     while True:
         try:
             d.measure()
-            try:
-                temperatura=d.temperature()
-                try:
-                    humedad=d.humidity()
-                    datos=json.dumps(OrderedDict([
-                        ('temperatura',temperatura),
-                        ('humedad',humedad)
-                    ]))
-                    #await client.publish(config['client_id'], datos, qos = 1)
-                    await client.publish(topic + topic_base, datos, qos = 1)
-                except OSError as e:
-                    print("sin sensor temperatura")
-            except OSError as e:
-                print("sin sensor humedad")
+            temperatura=d.temperature()
+            humedad=d.humidity()
+            datos=json.dumps(OrderedDict([
+                ('temperatura',temperatura),
+                ('humedad',humedad)
+            ]))
+            await client.publish('iot/2024/' + config['client_id'].decode('utf-8'), datos, qos = 1)
         except OSError as e:
             print("sin sensor")
-        await asyncio.sleep(180)  # Broker is slow
+        await asyncio.sleep(30)  # Broker is slow
 
 # Define configuration
 config['subs_cb'] = sub_cb
