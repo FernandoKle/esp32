@@ -13,13 +13,18 @@
 # red LED: ON == WiFi fail
 # green LED heartbeat: demonstrates scheduler is running.
 
-from mqtt_as import MQTTClient
+from mqtt_as import MQTTClient        #async with client.messages() as messages:
 from mqtt_local import config
 import uasyncio as asyncio
 import dht, machine, json
 from collections import OrderedDict
+from settings import *
+import ubinascii
 
 d = dht.DHT22(machine.Pin(13))
+topic_base = ubinascii.hexlify(machine.unique_id()).decode('utf-8')
+# 24dcc399d76c
+
 
 def sub_cb(topic, msg, retained):
     print('Topic = {} -> Valor = {}'.format(topic.decode(), msg.decode()))
@@ -36,6 +41,7 @@ async def main(client):
     await client.connect()
     n = 0
     await asyncio.sleep(2)  # Give broker time
+    print("Publicando a iot/2024/" + topic_base )
     while True:
         try:
             d.measure()
@@ -47,7 +53,8 @@ async def main(client):
                         ('temperatura',temperatura),
                         ('humedad',humedad)
                     ]))
-                    await client.publish(config['client_id'], datos, qos = 1)
+                    #await client.publish(config['client_id'], datos, qos = 1)
+                    await client.publish(topic + topic_base, datos, qos = 1)
                 except OSError as e:
                     print("sin sensor temperatura")
             except OSError as e:
@@ -60,7 +67,7 @@ async def main(client):
 config['subs_cb'] = sub_cb
 config['connect_coro'] = conn_han
 config['wifi_coro'] = wifi_han
-config['ssl'] = True
+config['ssl'] = False
 
 # Set up client
 MQTTClient.DEBUG = True  # Optional
